@@ -1,47 +1,36 @@
 package campaign
 
 import (
-	"errors"
 	"time"
 
 	"github.com/rs/xid"
 )
 
 type Contact struct {
-	Email string
+	Email string `validate:"email"`
 }
 
 type Campaign struct {
-	ID        string
-	Name      string
-	CreatedOn time.Time
-	Content   string
-	Contacts  []Contact
+	ID        string    `validate:"required"`
+	Name      string    `validate:"min=5,max=24"`
+	CreatedOn time.Time `validate:"required"`
+	Content   string    `validate:"min=5,max=24"`
+	Contacts  []Contact `validate:"min=1,max=24"`
 }
 
 func NewCampaign(name string, content string, emails []string) (*Campaign, error) {
 
 	contacts := make([]Contact, len(emails))
-	if name == ""{
-		return nil, errors.New("Name is required")
-	}
-	if content == ""{
-		return nil, errors.New("content is required")
-	}
-	
-	if len(contacts) == 0 {
-		return nil, errors.New("Contact is required")
-	}
 
 	for indx, value := range emails {
 		contacts[indx].Email = value
 	}
-	
+
 	return &Campaign{
 		ID:        xid.New().String(),
 		Name:      name,
 		Content:   content,
 		CreatedOn: time.Now(),
-		Contacts: contacts,
+		Contacts:  contacts,
 	}, nil
 }
