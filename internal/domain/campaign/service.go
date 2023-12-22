@@ -9,11 +9,13 @@ type Service struct {
 	Repository Repository
 }
 
-func (s *Service) Create(newCampaging contract.NewCampaign) (string, error) {
+func (s *Service) Create(newCampaign contract.NewCampaign) (string, error) {
 
-	campaign, _ := NewCampaign(newCampaging.Name, newCampaging.Content, newCampaging.Emails)
-
-	err := s.Repository.Save(campaign)
+	campaign, err := NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails)
+	if err != nil {
+		return "", err
+	}
+	err = s.Repository.Save(campaign)
 
 	if err != nil {
 		return "", internalerror.ErrInternal

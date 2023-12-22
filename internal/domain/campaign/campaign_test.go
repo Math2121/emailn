@@ -4,18 +4,19 @@ import (
 	"testing"
 	"time"
 
+	"github.com/jaswdr/faker"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
 	name     = "Campaing Test"
-	content  = "html"
+	content  = "Body Hi"
 	contacts = []string{"teste@gmail.com", "teste2@gmail.com"}
 )
 
 func TestNewCampaign(t *testing.T) {
 
-	campaign,_ := NewCampaign(name, content, contacts)
+	campaign, _ := NewCampaign(name, content, contacts)
 	println(campaign.ID)
 
 	if campaign.Name != name {
@@ -33,7 +34,7 @@ func TestNewCampaign(t *testing.T) {
 
 func TestNewCampaignID(t *testing.T) {
 
-	campaign,_ := NewCampaign(name, content, contacts)
+	campaign, _ := NewCampaign(name, content, contacts)
 
 	assert.NotNil(t, campaign.ID)
 }
@@ -47,29 +48,60 @@ func TestNewCampaign_CreatedOnIsNotNil(t *testing.T) {
 	assert.Greater(t, campaign.CreatedOn, now)
 }
 
+func Test_NewCampaign_MustValidateNameMin(t *testing.T) {
 
-func Test_NeCampign_MustValidateName(t *testing.T){
 	assert := assert.New(t)
+
 	_, err := NewCampaign("", content, contacts)
 
-	assert.Equal("Name is required", err.Error())
+	assert.Equal("name is required with min 5", err.Error())
 
 }
 
+func Test_NewCampaign_MustValidateNameMax(t *testing.T) {
 
-func Test_NeCampign_MustValidateContent(t *testing.T){
+	assert := assert.New(t)
+	fake := faker.New()
+
+	_, err := NewCampaign(fake.Lorem().Text(30), content, contacts)
+
+	assert.Equal("name is required with max 24", err.Error())
+
+}
+
+func Test_NewCampaign_MustValidateContentMin(t *testing.T) {
 	assert := assert.New(t)
 	_, err := NewCampaign(name, "", contacts)
 
-	assert.Equal("content is required", err.Error())
+	assert.Equal("content is required with min 5", err.Error())
+
+}
+
+func Test_NewCampaign_MustValidateContentMax(t *testing.T) {
+	assert := assert.New(t)
+	fake := faker.New()
+
+	_, err := NewCampaign(name, fake.Lorem().Text(1040), contacts)
+
+	assert.Equal("content is required with max 1024", err.Error())
 
 }
 
 
-func Test_NeCampign_MustValidateContact(t *testing.T){
+func Test_NewCampaign_MustValidateContactsMin(t *testing.T) {
 	assert := assert.New(t)
-	_, err := NewCampaign(name, content, []string{})
 
-	assert.Equal("Contact is required", err.Error())
+	_, err := NewCampaign(name, content, nil)
+
+	assert.Equal("contacts is required with min 1", err.Error())
+
+}
+
+func Test_NewCampaign_MustValidateContacts(t *testing.T) {
+	assert := assert.New(t)
+
+	_, err := NewCampaign(name, content, []string{"email_invalid"})
+
+	assert.Equal("email is invalid", err.Error())
 
 }
