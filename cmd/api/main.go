@@ -23,5 +23,8 @@ func main() {
 	}
 	
 	router.Post("/campaigns", handler.CampaignsPost)
+	router.Get("/campaigns", handler.CampaignGet)
+
+	
 	http.ListenAndServe(":3000", router)
 }
