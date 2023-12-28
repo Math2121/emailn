@@ -9,25 +9,22 @@ import (
 	"github.com/go-chi/render"
 )
 
-func (h *Handler) CampaignsPost(writer http.ResponseWriter, request *http.Request) {
-		var requestBody contract.NewCampaign
+func (h *Handler) CampaignsPost(writer http.ResponseWriter, request *http.Request) (interface{}, int, error) {
+	var requestBody contract.NewCampaign
 
-		render.DecodeJSON(request.Body, &requestBody)
+	render.DecodeJSON(request.Body, &requestBody)
 
-		id, err := h.CampaignService.Create(requestBody)
+	id, err := h.CampaignService.Create(requestBody)
 
-		if err != nil {
-			if errors.Is(err, internalerror.ErrInternal) {
-				render.Status(request, 400)
-				render.JSON(writer, request, map[string]string{"error": err.Error()})
-			} else {
-				render.Status(request, 402)
-				render.JSON(writer, request, map[string]string{"error": err.Error()})
-			}
+	if err != nil {
+		if errors.Is(err, internalerror.ErrInternal) {
+			return nil, 500, internalerror.ErrInternal
 
-			return
+		} else {
+			return nil, 400, err
 		}
 
-		render.Status(request, 201)
-		render.JSON(writer, request, map[string]string{"id": id})
+	}
+	return map[string]string{"id": id}, 201, nil
+
 }
