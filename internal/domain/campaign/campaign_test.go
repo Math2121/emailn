@@ -33,19 +33,25 @@ func TestNewCampaign(t *testing.T) {
 }
 
 func TestNewCampaignID(t *testing.T) {
-
+	assert := assert.New(t)
 	campaign, _ := NewCampaign(name, content, contacts)
 
 	assert.NotNil(t, campaign.ID)
 }
+func TestNewCampaignStatus(t *testing.T) {
+	assert := assert.New(t)
+	campaign, _ := NewCampaign(name, content, contacts)
+
+	assert.Equal(Pending, campaign.Status)
+}
 
 func TestNewCampaign_CreatedOnIsNotNil(t *testing.T) {
-
+	assert := assert.New(t)
 	now := time.Now().Add(-time.Minute)
 
 	campaign, _ := NewCampaign(name, content, contacts)
 
-	assert.Greater(t, campaign.CreatedOn, now)
+	assert.Greater(campaign.CreatedOn, now)
 }
 
 func Test_NewCampaign_MustValidateNameMin(t *testing.T) {
@@ -86,7 +92,6 @@ func Test_NewCampaign_MustValidateContentMax(t *testing.T) {
 	assert.Equal("content is required with max 1024", err.Error())
 
 }
-
 
 func Test_NewCampaign_MustValidateContactsMin(t *testing.T) {
 	assert := assert.New(t)
