@@ -20,7 +20,7 @@ var (
 		Content: "Body Hi!",
 		Emails:  []string{"teste1@test.com"},
 	}
-	service = Service{}
+	service = ServiceImp{}
 )
 
 func (r *repositoryMock) Save(campaign *Campaign) error {
@@ -65,7 +65,7 @@ func Test_Save_Campaign(t *testing.T) {
 		return true
 	})).Return(nil)
 
-	service := Service{Repository: repositoryMock}
+	service := ServiceImp{Repository: repositoryMock}
 
 	service.Create(newCampaign)
 
@@ -78,7 +78,7 @@ func Test_Create_ValidateRepositorySave(t *testing.T) {
 	repositoryMock := new(repositoryMock)
 	repositoryMock.On("Save", mock.Anything).Return(errors.New("error to save on database"))
 
-	service := Service{Repository: repositoryMock}
+	service := ServiceImp{Repository: repositoryMock}
 
 	_, err := service.Create(newCampaign)
 
