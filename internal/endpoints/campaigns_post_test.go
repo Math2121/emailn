@@ -21,6 +21,11 @@ func (r *serviceMock) Create(newCampaig contract.NewCampaign) (string, error) {
 
 	return args.String(0), args.Error(1)
 }
+func (s *serviceMock) GetById(id string) (*contract.CampaingResponse, error) {
+	//args := r.Called(id)
+
+	return nil, nil
+}
 
 func Test_Campaigns_Post_Should_save_new_campaign(t *testing.T) {
 	assert := assert.New(t)
