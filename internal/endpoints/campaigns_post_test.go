@@ -3,6 +3,7 @@ package endpoints
 import (
 	"bytes"
 	"emailn/internal/contract"
+	inertnalmock "emailn/internal/test/mock"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -13,19 +14,6 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-type serviceMock struct {
-	mock.Mock
-}
-func (r *serviceMock) Create(newCampaig contract.NewCampaign) (string, error) {
-	args := r.Called(newCampaig)
-
-	return args.String(0), args.Error(1)
-}
-func (s *serviceMock) GetById(id string) (*contract.CampaingResponse, error) {
-	//args := r.Called(id)
-
-	return nil, nil
-}
 
 func Test_Campaigns_Post_Should_save_new_campaign(t *testing.T) {
 	assert := assert.New(t)
@@ -36,7 +24,7 @@ func Test_Campaigns_Post_Should_save_new_campaign(t *testing.T) {
 		Emails: []string{"test@example.com"},
 	}
 
-	service := new(serviceMock)
+	service := new(inertnalmock.CampaignServiceMock)
 	service.On("Create", mock.MatchedBy(func(request contract.NewCampaign) bool {
 		if request.Name == body.Name{
 			return true
@@ -75,7 +63,7 @@ func Test_Campaigns_Should_inform_error( t *testing.T) {
 		Emails: []string{"test@example.com"},
 	}
 
-	service := new(serviceMock)
+	service := new(inertnalmock.CampaignServiceMock)
 	service.On("Create", mock.Anything).Return("", fmt.Errorf("error test"))
 
 	handler := Handler{CampaignService: service}
