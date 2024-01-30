@@ -13,9 +13,8 @@ import (
 func main() {
 	router := chi.NewRouter()
 
-
 	db := database.NewDb()
-	
+
 	campaignService := campaign.ServiceImp{
 		Repository: &database.CampaignRepository{Db: db},
 	}
@@ -26,6 +25,7 @@ func main() {
 
 	router.Post("/campaigns", endpoints.HandlerError(handler.CampaignsPost))
 	router.Get("/campaigns/{id}", endpoints.HandlerError(handler.CampaignGetById))
+	router.Patch("/campaigns/cancel/{id}", endpoints.HandlerError(handler.CampaignCancelPatch))
 
 	http.ListenAndServe(":3000", router)
 }
