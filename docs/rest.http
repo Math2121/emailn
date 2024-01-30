@@ -1,9 +1,14 @@
-GET http://localhost:3000/json
-
-###]
-POST http://localhost:3000/teste
+POST http://localhost:3000/campaigns
 
 {
     "Name": "teste",
-    "Price": 25
+    "Content":"teste com body",
+    "emails": ["teste@gmail.com"]
 }
+
+###  
+GET http://localhost:3000/campaigns/cmseqnplrn0ko10278s0
+
+###  
+PATCH  http://localhost:3000/campaigns/cancel/cmseqnplrn0ko10278s0
+
