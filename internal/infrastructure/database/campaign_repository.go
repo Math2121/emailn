@@ -11,7 +11,7 @@ type CampaignRepository struct {
 }
 
 func (c *CampaignRepository) Save(campaign *campaign.Campaign) error {
-	tx := c.Db.Create(campaign)
+	tx := c.Db.Save(campaign)
 
 	return tx.Error
 }
@@ -25,6 +25,7 @@ func (c *CampaignRepository) Get() ([]campaign.Campaign, error) {
 
 func (c *CampaignRepository) GetById(id string) (*campaign.Campaign, error) {
 	var campaignFounded campaign.Campaign
-	tx := c.Db.First(&campaignFounded, id)
+	tx := c.Db.First(&campaignFounded,"id = ?", id)
 	return &campaignFounded, tx.Error
 }
+

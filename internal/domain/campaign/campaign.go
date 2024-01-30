@@ -11,6 +11,7 @@ const (
 	Pending string = "Pending"
 	Started string = "Started"
 	Done    string = "Done"
+	Cancel  string = "Cancel"
 )
 
 type Contact struct {
@@ -53,4 +54,8 @@ func NewCampaign(name string, content string, emails []string) (*Campaign, error
 	}
 
 	return nil, error
+}
+
+func (c *Campaign) Cancel() {
+	c.Status = Cancel
 }
