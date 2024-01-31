@@ -10,6 +10,7 @@ type Service interface {
 	Create(newCampaign contract.NewCampaign) (string, error)
 	GetById(id string) (*contract.CampaingResponse, error)
 	Cancel(id string) (error)
+	Delete(id string) error
 }
 
 type campaingAttributes struct {
@@ -48,6 +49,7 @@ func (s *ServiceImp) GetById(id string) (*contract.CampaingResponse, error) {
 		Status: campaign.Status,
 		ID: campaign.ID,
 		Content: campaign.Content,
+		AmountOfEmailsToSend: len(campaign.Contacts),
 	}, nil
 }
 
@@ -65,7 +67,30 @@ func (s *ServiceImp) Cancel(id string) ( error) {
 	}
 
 	campaing.Cancel()
-	err = s.Repository.Save(campaing)
+	err = s.Repository.Update(campaing)
+
+	if err != nil {
+		return internalerror.ErrInternal
+	}
+
+
+	return nil
+}
+func (s *ServiceImp) Delete(id string) ( error) {
+
+	campaing, err := s.Repository.GetById(id)
+
+	if err != nil {
+		return internalerror.ErrInternal
+	}
+
+	if campaing.Status != Pending {
+
+		return errors.New("Campaign status invalid")
+	}
+
+	campaing.Delete()
+	err = s.Repository.Delete(campaing)
 
 	if err != nil {
 		return internalerror.ErrInternal

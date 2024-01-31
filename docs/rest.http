@@ -1,14 +1,17 @@
 POST http://localhost:3000/campaigns
 
 {
-    "Name": "teste",
+    "Name": "teste-rmsil",
     "Content":"teste com body",
-    "emails": ["teste@gmail.com"]
+    "emails": ["teste@gmail.com","teste2@gmail.com","teste5@gmail.com"]
 }
 
 ###  
-GET http://localhost:3000/campaigns/cmseqnplrn0ko10278s0
+GET http://localhost:3000/campaigns/cmt5eb1lrn0hrb35c1k0
 
 ###  
 PATCH  http://localhost:3000/campaigns/cancel/cmseqnplrn0ko10278s0
+
+###  
+DELETE http://localhost:3000/campaigns/delete/cmt5eb1lrn0hrb35c1k0
 
