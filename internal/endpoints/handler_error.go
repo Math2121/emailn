@@ -3,6 +3,7 @@ package endpoints
 import (
 	internalerror "emailn/internal/internalError"
 	"errors"
+
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -19,7 +20,7 @@ func HandlerError(endpointFunc EndpointFunc) http.HandlerFunc {
 			if errors.Is(err, internalerror.ErrInternal) {
 				render.Status(r, 500)
 			} else if errors.Is(err, gorm.ErrRecordNotFound) {
-				render.Status(r, 404)
+				render.Status(r, status)
 			} else {
 				render.Status(r, 400)
 			}
