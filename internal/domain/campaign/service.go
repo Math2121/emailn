@@ -4,6 +4,8 @@ import (
 	"emailn/internal/contract"
 	internalerror "emailn/internal/internalError"
 	"errors"
+
+	"gorm.io/gorm"
 )
 
 type Service interface {
@@ -42,13 +44,16 @@ func (s *ServiceImp) GetById(id string) (*contract.CampaingResponse, error) {
 	campaign, err := s.Repository.GetById(id)
 
 	if err != nil {
-		return nil, internalerror.ErrInternal
+		if !errors.Is(err, gorm.ErrRecordNotFound){
+			return nil, internalerror.ErrInternal
+		}
+		return nil, internalerror.ProcessErrorToReturn(err)
 	}
 
 	if campaign == nil {
 		return nil, nil
 	}
-	
+
 	return &contract.CampaingResponse{
 		Name: campaign.Name,
 		Status: campaign.Status,
