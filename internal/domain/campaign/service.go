@@ -42,8 +42,13 @@ func (s *ServiceImp) GetById(id string) (*contract.CampaingResponse, error) {
 	campaign, err := s.Repository.GetById(id)
 
 	if err != nil {
-		return &contract.CampaingResponse{}, internalerror.ErrInternal
+		return nil, internalerror.ErrInternal
 	}
+
+	if campaign == nil {
+		return nil, nil
+	}
+	
 	return &contract.CampaingResponse{
 		Name: campaign.Name,
 		Status: campaign.Status,
