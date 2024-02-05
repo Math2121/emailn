@@ -3,7 +3,7 @@ package endpoints
 import (
 	"bytes"
 	"emailn/internal/contract"
-	inertnalmock "emailn/internal/test/mock"
+	inertnalmock "emailn/internal/test/internal-mock"
 	"encoding/json"
 	"fmt"
 	"net/http"
