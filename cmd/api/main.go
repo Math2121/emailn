@@ -13,6 +13,9 @@ import (
 func main() {
 	router := chi.NewRouter()
 
+	
+	router.Use(endpoints.Auth)
+
 	db := database.NewDb()
 
 	campaignService := campaign.ServiceImp{
