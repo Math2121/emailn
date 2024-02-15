@@ -6,4 +6,5 @@ type CampaingResponse struct {
 	ID                   string
 	Content              string
 	AmountOfEmailsToSend int
+	CreatedBy            string
 }

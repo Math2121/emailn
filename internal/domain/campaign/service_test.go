@@ -17,9 +17,10 @@ import (
 
 var (
 	newCampaign = contract.NewCampaign{
-		Name:    "Test Y",
-		Content: "teste",
-		Emails:  []string{"test@example.com"},
+		Name:      "Test Y",
+		Content:   "teste",
+		Emails:    []string{"test@example.com"},
+		CreatedBy: "teste@teste.com.br",
 	}
 	service = campaign.ServiceImp{}
 )
@@ -82,7 +83,7 @@ func Test_Get_By_ID(t *testing.T) {
 	assert := assert.New(t)
 	repositoryMock := new(internalmock.CampaingRepositoryMock)
 
-	campaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, "")
+	campaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, newCampaign.CreatedBy)
 	repositoryMock.On("GetById", mock.MatchedBy(func(id string) bool {
 		return id == campaign.ID
 	})).
@@ -94,13 +95,15 @@ func Test_Get_By_ID(t *testing.T) {
 
 	assert.Equal(campaign.Name, campaingReturned.Name)
 	assert.Equal(campaign.Status, campaingReturned.Status)
+	assert.Equal(campaign.CreatedBy, campaingReturned.CreatedBy)
 }
 
 func Test_Get_By_ID_Error(t *testing.T) {
 	assert := assert.New(t)
 	repositoryMock := new(internalmock.CampaingRepositoryMock)
 
-	campaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, "")
+	campaign, _ := campaign.NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, newCampaign.CreatedBy)
+
 	repositoryMock.On("GetById", mock.Anything).
 		Return(nil, errors.New("Something"))
 
@@ -151,7 +154,7 @@ func Test_Delete_ReturnInternalError_when_delete_has_problem(t *testing.T) {
 		"Test12222",
 		"bodsssssy",
 		[]string{"teste@example.com"},
-		"",
+		newCampaign.CreatedBy,
 	)
 	repositoryMock := new(internalmock.CampaingRepositoryMock)
 
@@ -175,7 +178,7 @@ func Test_Delete_ReturnNilwhen_delete_has_success(t *testing.T) {
 		"Test12222",
 		"bodsssy",
 		[]string{"teste@example.com"},
-		"",
+		newCampaign.CreatedBy,
 	)
 	repositoryMock := new(internalmock.CampaingRepositoryMock)
 
