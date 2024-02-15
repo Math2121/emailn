@@ -8,15 +8,17 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func main() {
 	router := chi.NewRouter()
 
-	
-	router.Use(endpoints.Auth)
+	router.Use(middleware.Recoverer)
 
 	db := database.NewDb()
+
+	router.Use(endpoints.Auth)
 
 	campaignService := campaign.ServiceImp{
 		Repository: &database.CampaignRepository{Db: db},
@@ -26,10 +28,13 @@ func main() {
 		CampaignService: &campaignService,
 	}
 
-	router.Post("/campaigns", endpoints.HandlerError(handler.CampaignsPost))
-	router.Get("/campaigns/{id}", endpoints.HandlerError(handler.CampaignGetById))
-	router.Patch("/campaigns/cancel/{id}", endpoints.HandlerError(handler.CampaignCancelPatch))
-	router.Delete("/campaigns/delete/{id}", endpoints.HandlerError(handler.CampaignDelete))
+	router.Route("/api/v1/campaings", func(r chi.Router) {
+		r.Post("/", endpoints.HandlerError(handler.CampaignsPost))
+		r.Get("/{id}", endpoints.HandlerError(handler.CampaignGetById))
+		r.Patch("/cancel/{id}", endpoints.HandlerError(handler.CampaignCancelPatch))
+		r.Delete("/delete/{id}", endpoints.HandlerError(handler.CampaignDelete))
+
+	})
 
 	http.ListenAndServe(":3000", router)
 }

@@ -1,4 +1,8 @@
-POST http://localhost:3000/campaigns
+@url = http://localhost:3000/campaigns
+
+
+POST {{url}}
+Authorization: Bearer eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJqMjBNQWpxTnE3Mk9XWWNfRXNZUTJHUDVFdFhubEFEcUpTMUFUc3dCQnlzIn0.eyJleHAiOjE3MDc0OTAxMDEsImlhdCI6MTcwNzQ4OTgwMSwianRpIjoiM2U1Mzc2ZmYtOTNhMC00OTA4LWI4MzMtNWVlZGE2OTJlM2Y3IiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo4MDgwL3JlYWxtcy9wcm92aWRlciIsImF1ZCI6ImVtYWlsbiIsInN1YiI6ImY5N2ViM2RiLTRjYmMtNDFkMy1iZjkwLTQwNDA1OGM3Njk5NyIsInR5cCI6IkJlYXJlciIsImF6cCI6ImVtYWlsbiIsInNlc3Npb25fc3RhdGUiOiJmNmVmNmM0MC0xNzgyLTRkODctYTIwZC00OGEwNGFmZWZjYmQiLCJzY29wZSI6InByb2ZpbGUiLCJzaWQiOiJmNmVmNmM0MC0xNzgyLTRkODctYTIwZC00OGEwNGFmZWZjYmQiLCJnZW5kZXIiOiJtYW4iLCJuYW1lIjoiTWF0aGV1cyBEZSBQYXVsYSIsInByZWZlcnJlZF91c2VybmFtZSI6Im1hdGhldXMiLCJnaXZlbl9uYW1lIjoiTWF0aGV1cyIsImZhbWlseV9uYW1lIjoiRGUgUGF1bGEifQ.Dl_PsCFX_pT8f2Usr0BfuEeDEpm2s_Suq2bjsmyWsD_sEQVWENBeKiu51u8Am1vCurnCLKEqNG0SNGsOzsGx20KP6zeD0Ejv824LysfVVnQpZxbyvxpHg-ofVcyseVvPlRS0mwR9uWea6aG7Eege6CDpwmLx2cdTogGeOpszcU6E3nO6Eis_SldMKJ1Gl9MTvrbvMt1HPi6S0wDsiMMPnOAHn0_Un8qsWaeMa9to526Jb-rwuL7gajhCuwpVvhhUPhXS9oi4tKo1M5ByMQyl6STFYUKn8-24VNyv_Ko0e-0Z6XNCfYu_sQQXBU3VTt9-bWD8Lfuqbsh7WnhuAQCeig
 
 {
     "Name": "teste-rmsil",
@@ -7,11 +11,23 @@ POST http://localhost:3000/campaigns
 }
 
 ###  
-GET http://localhost:3000/campaigns/cmt5eb1lrn0hrb35c1k0
+GET {{url}}/cmt5eb1lrn0hrb35c1k0
 
 ###  
-PATCH  http://localhost:3000/campaigns/cancel/cmseqnplrn0ko10278s0
+PATCH  {{url}}/cancel/cmseqnplrn0ko10278s0
 
 ###  
-DELETE http://localhost:3000/campaigns/delete/cmt5eb1lrn0hrb35c1k0
+DELETE {{url}}/delete/cmt5eb1lrn0hrb35c1k0
 
+
+
+
+###
+# @name token
+POST http://localhost:8080/realms/provider/protocol/openid-connect/token
+Content-Type: application/x-www-form-urlencoded
+
+client_id=emailn&username=matheus&password=123456&grant_type=password
+
+###
+@access_token = {{token.response.body.access_token}}
