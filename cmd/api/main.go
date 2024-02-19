@@ -5,13 +5,23 @@ import (
 	"emailn/internal/endpoints"
 	"emailn/internal/infrastructure/database"
 
+	"log"
+	"path/filepath"
+
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	err := godotenv.Load(filepath.Join("./", ".env"))
+
+	if err != nil {
+		log.Fatal("error in env file")
+	}
+	
 	router := chi.NewRouter()
 
 	router.Use(middleware.Recoverer)

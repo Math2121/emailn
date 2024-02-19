@@ -2,6 +2,7 @@ package endpoints
 
 import (
 	"context"
+	"os"
 
 	"net/http"
 	"strings"
@@ -23,7 +24,7 @@ func Auth(next http.Handler) http.Handler {
 		}
 
 		tokenString = strings.Replace(tokenString, "Bearer ", "", 1)
-		provider, err := oidc.NewProvider(r.Context(), "http://localhost:8080/realms/provider")
+		provider, err := oidc.NewProvider(r.Context(), os.Getenv("KEYCLOAK"))
 
 		if err != nil {
 			render.Status(r, 500)
