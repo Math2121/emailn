@@ -11,18 +11,19 @@ import (
 type Service interface {
 	Create(newCampaign contract.NewCampaign) (string, error)
 	GetById(id string) (*contract.CampaingResponse, error)
-	Cancel(id string) (error)
+	Cancel(id string) error
 	Delete(id string) error
 }
 
 type campaingAttributes struct {
-	Name string
+	Name   string
 	Status string
-	ID string
+	ID     string
 }
 
 type ServiceImp struct {
 	Repository Repository
+	SendMail   func(camaign *Campaign) error
 }
 
 func (s *ServiceImp) Create(newCampaign contract.NewCampaign) (string, error) {
@@ -45,7 +46,7 @@ func (s *ServiceImp) GetById(id string) (*contract.CampaingResponse, error) {
 	campaign, err := s.Repository.GetById(id)
 
 	if err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound){
+		if !errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, internalerror.ErrInternal
 		}
 		return nil, internalerror.ProcessErrorToReturn(err)
@@ -56,16 +57,16 @@ func (s *ServiceImp) GetById(id string) (*contract.CampaingResponse, error) {
 	}
 
 	return &contract.CampaingResponse{
-		Name: campaign.Name,
-		Status: campaign.Status,
-		ID: campaign.ID,
-		Content: campaign.Content,
+		Name:                 campaign.Name,
+		Status:               campaign.Status,
+		ID:                   campaign.ID,
+		Content:              campaign.Content,
 		AmountOfEmailsToSend: len(campaign.Contacts),
-		CreatedBy: campaign.CreatedBy,
+		CreatedBy:            campaign.CreatedBy,
 	}, nil
 }
 
-func (s *ServiceImp) Cancel(id string) ( error) {
+func (s *ServiceImp) Cancel(id string) error {
 
 	campaing, err := s.Repository.GetById(id)
 
@@ -85,10 +86,9 @@ func (s *ServiceImp) Cancel(id string) ( error) {
 		return internalerror.ErrInternal
 	}
 
-
 	return nil
 }
-func (s *ServiceImp) Delete(id string) ( error) {
+func (s *ServiceImp) Delete(id string) error {
 
 	campaing, err := s.Repository.GetById(id)
 
@@ -108,7 +108,30 @@ func (s *ServiceImp) Delete(id string) ( error) {
 		return internalerror.ErrInternal
 	}
 
-
 	return nil
 }
 
+func (s *ServiceImp) Start(id string) error {
+	campaingSaved, err := s.Repository.GetById(id)
+
+	if err != nil {
+		return internalerror.ProcessErrorToReturn(err)
+	}
+
+	if campaingSaved.Status != Pending {
+
+		return errors.New("Campaign status invalid")
+	}
+
+	err = s.SendMail(campaingSaved)
+	if err != nil {
+		return internalerror.ErrInternal
+	}
+
+	campaingSaved.Status = Done
+	err = s.Repository.Update(campaingSaved)
+	if err != nil {
+		return internalerror.ErrInternal
+	}
+	return nil
+}
