@@ -12,6 +12,7 @@ type Service interface {
 	Create(newCampaign contract.NewCampaign) (string, error)
 	GetById(id string) (*contract.CampaingResponse, error)
 	Cancel(id string) error
+	Start(id string) error
 	Delete(id string) error
 }
 
@@ -23,7 +24,7 @@ type campaingAttributes struct {
 
 type ServiceImp struct {
 	Repository Repository
-	SendMail   func(camaign *Campaign) error
+	SendMail   func(campaign *Campaign) error
 }
 
 func (s *ServiceImp) Create(newCampaign contract.NewCampaign) (string, error) {

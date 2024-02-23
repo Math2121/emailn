@@ -22,7 +22,8 @@ PATCH  {{url}}/cancel/cmseqnplrn0ko10278s0
 DELETE {{url}}/delete/cmt5eb1lrn0hrb35c1k0
 
 
-
+###  
+PATCH  {{url}}/start/cmt5eb1lrn0hrb35c1k0
 
 ###
 # @name token
