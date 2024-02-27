@@ -6,10 +6,10 @@ import (
 	internalerror "emailn/internal/internalError"
 	internalMock "emailn/internal/test/internal-mock"
 	"errors"
-	"testing"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
+	"testing"
 )
 
 var (
@@ -41,6 +41,18 @@ func SetUp() {
 		Status: campaign.Started,
 	}
 
+}
+
+func setUpUpdateRepository(err error) {
+	repositoryMock.On("Update", mock.Anything).Return(err)
+}
+
+func setUpSendEmail(err error) {
+	sendMail := func(campaign *campaign.Campaign) error {
+		return err
+	}
+
+	service.SendMail = sendMail
 }
 
 func Test_Create_Campaign(t *testing.T) {
@@ -198,53 +210,13 @@ func Test_Start_ReturnRecordNotFound_when_campaign_is_pending(t *testing.T) {
 
 }
 
-func Test_Start_Should_send_mail(t *testing.T) {
+func Test_Start_ReturnNil_when_updated_campaign_to_started(t *testing.T) {
 	SetUp()
 	assert := assert.New(t)
-
-	repositoryMock.On("GetById", mock.Anything).Return(campaignPendenting, nil)
-	repositoryMock.On("Update", mock.Anything).Return(nil)
-	sentMail := false
-	sendMail := func(campaing *campaign.Campaign) error {
-		if campaing.ID == campaignPendenting.ID {
-			sentMail = true
-		}
-		return nil
-	}
-	service.SendMail = sendMail
-
-	service.Start(campaignPendenting.ID)
-
-	assert.True(sentMail)
-
-}
-
-func Test_Start_ReturnError_when_func_sendMail_return_error(t *testing.T) {
-	SetUp()
-	assert := assert.New(t)
-
-	repositoryMock.On("GetById", mock.Anything).Return(campaignPendenting, nil)
-
-	sendMail := func(campaing *campaign.Campaign) error {
-		return errors.New("Error to send mail")
-	}
-
-	service.SendMail = sendMail
-
-	err := service.Start(campaignPendenting.ID)
-
-	assert.Equal(internalerror.ErrInternal.Error(), err.Error())
-
-}
-
-func Test_Start_ReturnNil_when_udpated_campaign_to_done(t *testing.T) {
-	SetUp()
-	assert := assert.New(t)
-
 
 	repositoryMock.On("GetById", mock.Anything).Return(campaignStated, nil)
 	repositoryMock.On("Update", mock.MatchedBy(func(campaignUpdated *campaign.Campaign) bool {
-		return campaignStated.ID == campaignUpdated.ID && campaignUpdated.Status == campaign.Done
+		return campaignStated.ID == campaignUpdated.ID && campaignUpdated.Status == campaign.Started
 
 	})).Return(nil)
 
@@ -257,5 +229,34 @@ func Test_Start_ReturnNil_when_udpated_campaign_to_done(t *testing.T) {
 	service.Start(campaignStated.ID)
 
 	assert.Equal(campaign.Started, campaignStated.Status)
+
+}
+func Test_Start_SendEmailUpdateStarted_StatusIsStarted_WhenFail(t *testing.T) {
+	SetUp()
+	setUpSendEmail(errors.New("error to send email"))
+
+	repositoryMock.On("Update", mock.MatchedBy(func(campaignUpdated *campaign.Campaign) bool {
+		return campaignStated.ID == campaignUpdated.ID && campaignUpdated.Status == campaign.Fail
+
+	})).Return(nil)
+
+	service.SendEmailAndUpdateStatus(campaignStated)
+
+	repositoryMock.AssertExpectations(t)
+
+}
+
+func Test_Start_SendEmailUpdateStarted_StatusIsDone(t *testing.T) {
+	SetUp()
+	setUpSendEmail(nil)
+
+	repositoryMock.On("Update", mock.MatchedBy(func(campaignUpdated *campaign.Campaign) bool {
+		return campaignPendenting.ID == campaignUpdated.ID && campaignUpdated.Status == campaign.Done
+
+	})).Return(nil)
+
+	service.SendEmailAndUpdateStatus(campaignPendenting)
+
+	repositoryMock.AssertExpectations(t)
 
 }

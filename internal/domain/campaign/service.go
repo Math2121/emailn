@@ -111,7 +111,7 @@ func (s *ServiceImp) Delete(id string) error {
 
 	return nil
 }
-// TODO: make unit test
+
 func (s *ServiceImp) SendEmailAndUpdateStatus(campaign *Campaign)  {
 
 	err := s.SendMail(campaign)
@@ -122,7 +122,7 @@ func (s *ServiceImp) SendEmailAndUpdateStatus(campaign *Campaign)  {
 	}
 	s.Repository.Update(campaign)
 }
-// TODO: make unit test
+
 func (s *ServiceImp) Start(id string) error {
 	campaingSaved, err := s.Repository.GetById(id)
 
@@ -134,8 +134,6 @@ func (s *ServiceImp) Start(id string) error {
 
 		return errors.New("Campaign status invalid")
 	}
-
-	go s.SendEmailAndUpdateStatus(campaingSaved)
 
 	campaingSaved.Started()
 	err = s.Repository.Update(campaingSaved)
