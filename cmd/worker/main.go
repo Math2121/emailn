@@ -2,7 +2,10 @@ package main
 
 import (
 	// "emailn/internal/domain/campaign"
+	"emailn/internal/domain/campaign"
 	"emailn/internal/infrastructure/database"
+	"emailn/internal/infrastructure/mail"
+	"time"
 
 	"github.com/joho/godotenv"
 )
@@ -10,18 +13,24 @@ import (
 func main() {
 	godotenv.Load("../.env")
 
-	_ = database.NewDb()
-	// repository := database.CampaignRepository{Db: db}
+	db := database.NewDb()
+	repository := database.CampaignRepository{Db: db}
 
-	// for {
-	// 	campaigns, _ := repository.GetCampaignsToBeSent()
+	campaigns, err := repository.GetCampaignsToBeSent()
 
-	// 	for _, campaign := range campaigns {
-	// 		print(campaign.ID)
-	// 	}
-
-	// 	println("Sleeping for 1 hour")
-
-	// }
+	campaignService := campaign.ServiceImp{
+		Repository: &repository,
+		SendMail:   mail.SendMail,
+	}
+	for {
+		if err != nil {
+			println(err.Error())
+		}
+		for _, campaign := range campaigns {
+			campaignService.SendEmailAndUpdateStatus(&campaign)
+			println("Campaigns sent: ", campaign.ID)
+		}
+		time.Sleep(60 * 60 * time.Second)
+	}
 
 }

@@ -6,4 +6,5 @@ type Repository interface {
 	Get() ([]Campaign, error)
 	GetById(id string) (*Campaign, error)
 	Delete(campaign *Campaign) error
+	GetCampaignsToBeSent()([]Campaign, error)
 }
