@@ -30,7 +30,7 @@ type Campaign struct {
 	Content   string    `validate:"min=5,max=1024" gorm:"size:1024;not null"`
 	Contacts  []Contact `validate:"min=1,dive"`
 	CreatedBy string    `validate:"email" gorm:"size:100;not null"`
-	UpdatedOn time.Time 
+	UpdatedOn time.Time
 }
 
 func NewCampaign(name string, content string, emails []string, createdBy string) (*Campaign, error) {
@@ -71,19 +71,16 @@ func (c *Campaign) Delete() {
 	c.UpdatedOn = time.Now()
 }
 
-// TODO: make unit test
 func (c *Campaign) Fail() {
 	c.Status = Fail
 	c.UpdatedOn = time.Now()
 }
 
-// TODO: make unit test
 func (c *Campaign) Started() {
 	c.Status = Started
 	c.UpdatedOn = time.Now()
 }
 
-// TODO: make unit test
 func (c *Campaign) Done() {
 	c.Status = Done
 	c.UpdatedOn = time.Now()

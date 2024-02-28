@@ -1,12 +1,12 @@
 package endpoints
 
 import (
-	"emailn/internal/contract"
 	"errors"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
+	"emailn/internal/domain/campaign"
 	internalmock "emailn/internal/test/internal-mock"
 
 	"github.com/stretchr/testify/assert"
@@ -16,7 +16,7 @@ import (
 func Test_Campaigns_Get_BY_ID_Should_return_campaign(t *testing.T) {
 	assert := assert.New(t)
 
-	campaing := contract.CampaingResponse{
+	campaingRes := campaign.CampaingResponse{
 		ID:      "11",
 		Name:    "Teste",
 		Content: "Hi",
@@ -24,7 +24,7 @@ func Test_Campaigns_Get_BY_ID_Should_return_campaign(t *testing.T) {
 	}
 
 	service := new(internalmock.CampaignServiceMock)
-	service.On("GetById", mock.Anything).Return(&campaing, nil)
+	service.On("GetById", mock.Anything).Return(&campaingRes, nil)
 
 	handler := Handler{CampaignService: service}
 	req, _ := http.NewRequest("GET", "/", nil)
@@ -33,8 +33,8 @@ func Test_Campaigns_Get_BY_ID_Should_return_campaign(t *testing.T) {
 	response, status, _ := handler.CampaignGetById(rr, req)
 
 	assert.Equal(200, status)
-	assert.Equal(campaing.ID, response.(*contract.CampaingResponse).ID)
-	assert.Equal(campaing.Name, response.(*contract.CampaingResponse).Name)
+	assert.Equal(campaingRes.ID, response.(*campaign.CampaingResponse).ID)
+	assert.Equal(campaingRes.Name, response.(*campaign.CampaingResponse).Name)
 }
 
 func Test_Campaigns_Get_BY_ID_Should_return_error(t *testing.T) {

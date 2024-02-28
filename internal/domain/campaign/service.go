@@ -1,7 +1,7 @@
 package campaign
 
 import (
-	"emailn/internal/contract"
+
 	internalerror "emailn/internal/internalError"
 	"errors"
 
@@ -9,8 +9,8 @@ import (
 )
 
 type Service interface {
-	Create(newCampaign contract.NewCampaign) (string, error)
-	GetById(id string) (*contract.CampaingResponse, error)
+	Create(newCampaign NewCampaignRequest) (string, error)
+	GetById(id string) (*CampaingResponse, error)
 	Cancel(id string) error
 	Start(id string) error
 	Delete(id string) error
@@ -27,7 +27,7 @@ type ServiceImp struct {
 	SendMail   func(campaign *Campaign) error
 }
 
-func (s *ServiceImp) Create(newCampaign contract.NewCampaign) (string, error) {
+func (s *ServiceImp) Create(newCampaign NewCampaignRequest) (string, error) {
 
 	campaign, err := NewCampaign(newCampaign.Name, newCampaign.Content, newCampaign.Emails, newCampaign.CreatedBy)
 	if err != nil {
@@ -42,7 +42,7 @@ func (s *ServiceImp) Create(newCampaign contract.NewCampaign) (string, error) {
 	return campaign.ID, nil
 }
 
-func (s *ServiceImp) GetById(id string) (*contract.CampaingResponse, error) {
+func (s *ServiceImp) GetById(id string) (*CampaingResponse, error) {
 
 	campaign, err := s.Repository.GetById(id)
 
@@ -57,7 +57,7 @@ func (s *ServiceImp) GetById(id string) (*contract.CampaingResponse, error) {
 		return nil, nil
 	}
 
-	return &contract.CampaingResponse{
+	return &CampaingResponse{
 		Name:                 campaign.Name,
 		Status:               campaign.Status,
 		ID:                   campaign.ID,

@@ -1,7 +1,6 @@
 package internalmock
 
 import (
-	"emailn/internal/contract"
 	"emailn/internal/domain/campaign"
 
 	"github.com/stretchr/testify/mock"
@@ -12,7 +11,7 @@ type CampaingRepositoryMock struct {
 }
 
 var (
-	newCampaign = contract.NewCampaign{
+	newCampaign = campaign.NewCampaignRequest{
 		Name:    "Test Y",
 		Content: "Body Hi!",
 		Emails:  []string{"teste1@test.com"},

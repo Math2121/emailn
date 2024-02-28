@@ -112,3 +112,46 @@ func Test_NewCampaign_MustValidateCreatedBy(t *testing.T) {
 	assert.Equal("createdby is invalid", err.Error())
 
 }
+
+func Test_Campaign_ChangeStatus_Done(t *testing.T) {
+	assert := assert.New(t)
+
+	campaign, _ := NewCampaign(name, content, contacts, createdBy)
+
+	campaign.Done()
+
+	assert.Equal(campaign.Status, Done)
+
+}
+func Test_Campaign_ChangeStatus_Delete(t *testing.T) {
+	assert := assert.New(t)
+
+	campaign, _ := NewCampaign(name, content, contacts, createdBy)
+
+	campaign.Delete()
+
+	assert.Equal(campaign.Status, Delete)
+
+}
+
+func Test_Campaign_ChangeStatus_Fail(t *testing.T) {
+	assert := assert.New(t)
+
+	campaign, _ := NewCampaign(name, content, contacts, createdBy)
+
+	campaign.Fail()
+
+	assert.Equal(campaign.Status, Fail)
+
+}
+
+func Test_Campaign_ChangeStatus_Started(t *testing.T) {
+	assert := assert.New(t)
+
+	campaign, _ := NewCampaign(name, content, contacts, createdBy)
+
+	campaign.Started()
+
+	assert.Equal(campaign.Status, Started)
+
+}

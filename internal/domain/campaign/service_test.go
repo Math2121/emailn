@@ -1,7 +1,7 @@
 package campaign_test
 
 import (
-	"emailn/internal/contract"
+
 	"emailn/internal/domain/campaign"
 	internalerror "emailn/internal/internalError"
 	internalMock "emailn/internal/test/internal-mock"
@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	newCampaign = contract.NewCampaign{
+	newCampaign = campaign.NewCampaignRequest{
 		Name:      "Test Y",
 		Content:   "teste",
 		Emails:    []string{"test@example.com"},
@@ -70,7 +70,7 @@ func Test_Create_ValidateDomainError(t *testing.T) {
 	SetUp()
 	assert := assert.New(t)
 
-	_, err := service.Create(contract.NewCampaign{})
+	_, err := service.Create(campaign.NewCampaignRequest{})
 
 	assert.False(errors.Is(internalerror.ErrInternal, err))
 }

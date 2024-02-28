@@ -3,7 +3,7 @@ package endpoints
 import (
 	"bytes"
 	"context"
-	"emailn/internal/contract"
+	"emailn/internal/domain/campaign"
 	"encoding/json"
 	"fmt"
 	"net/http"
@@ -14,7 +14,7 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func setupInternal(body contract.NewCampaign, createdBy string) (*http.Request, *httptest.ResponseRecorder) {
+func setupInternal(body campaign.NewCampaignRequest, createdBy string) (*http.Request, *httptest.ResponseRecorder) {
 	var buf bytes.Buffer
 
 	json.NewEncoder(&buf).Encode(body)
@@ -33,13 +33,13 @@ func Test_Campaigns_Post_Should_save_new_campaign(t *testing.T) {
 
 	createdByExpected := "teste@email.com"
 
-	body := contract.NewCampaign{
+	body := campaign.NewCampaignRequest{
 		Name:    "test",
 		Content: "test content",
 		Emails:  []string{"test@example.com"},
 	}
 
-	service.On("Create", mock.MatchedBy(func(request contract.NewCampaign) bool {
+	service.On("Create", mock.MatchedBy(func(request campaign.NewCampaignRequest) bool {
 		if request.Name == body.Name && request.Content == body.Content && request.CreatedBy == createdByExpected {
 			return true
 		}
@@ -61,7 +61,7 @@ func Test_Campaigns_Should_inform_error(t *testing.T) {
 	setUp()
 	assert := assert.New(t)
 	createdByExpected := "teste@email.com"
-	body := contract.NewCampaign{
+	body := campaign.NewCampaignRequest{
 		Name:    "test",
 		Content: "test content",
 		Emails:  []string{"test@example.com"},
