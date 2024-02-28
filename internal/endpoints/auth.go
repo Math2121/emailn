@@ -2,15 +2,15 @@ package endpoints
 
 import (
 	"context"
-	"os"
+	"emailn/internal/infrastructure/credentials"
 
-	"net/http"
-	"strings"
-
-	"github.com/coreos/go-oidc/v3/oidc"
-	jwtgo "github.com/dgrijalva/jwt-go"
 	"github.com/go-chi/render"
+	"net/http"
 )
+
+type ValidateTokenFunc func(token string, ctx context.Context) (string, error)
+
+var ValidateToken ValidateTokenFunc = credentials.ValidateToken
 
 func Auth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -18,35 +18,16 @@ func Auth(next http.Handler) http.Handler {
 
 		if tokenString == "" {
 			render.Status(r, 401)
-
 			render.JSON(w, r, map[string]string{"error": "tokenString missing"})
 			return
 		}
 
-		tokenString = strings.Replace(tokenString, "Bearer ", "", 1)
-		provider, err := oidc.NewProvider(r.Context(), os.Getenv("KEYCLOAK"))
-
-		if err != nil {
-			render.Status(r, 500)
-			render.JSON(w, r, map[string]string{"error": "Error creating provider"})
-			return
-		}
-
-		// verifier := provider.Verifier(&oidc.Config{SkipClientIDCheck: true})
-		verifier := provider.Verifier(&oidc.Config{ClientID: "emailn"})
-		_, err = verifier.Verify(r.Context(), tokenString)
-
+		email, err := ValidateToken(tokenString, r.Context())
 		if err != nil {
 			render.Status(r, 401)
-			render.JSON(w, r, map[string]string{"error": "Invalid tokenString"})
+			render.JSON(w, r, map[string]string{"error": "invalid token"})
 			return
 		}
-
-		// decodificar token
-		token, _ := jwtgo.Parse(tokenString, nil)
-		claims := token.Claims.(jwtgo.MapClaims)
-
-		email := claims["email"]
 
 		ctx := context.WithValue(r.Context(), "email", email)
 
